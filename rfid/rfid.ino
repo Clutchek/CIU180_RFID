@@ -70,8 +70,8 @@ void setup() {
   chosenSol = 1;
 
   //Solutions
-  solutions[1][1] = "410043C377B6";
-  solutions[1][2] = "13";
+  solutions[1][1] = "410043C377B6";
+  solutions[1][2] = "410043C377B6";
   solutions[1][3] = "410043C377B6";
   //Tag Number: 410043C377B6
 
@@ -116,12 +116,13 @@ void loop() {
     digitalWrite(card3LED, LOW);
   }*/
 
-  //card1.listen();
+  card1.listen();
   if(card1.available() > 0){
     while (card1.available()){
-      part1 = card1.readBytesUntil(3, tagNumber, 15);//EOT (3) is the last character in tag
-      //Serial.print(part1);
+      int ReadBytes = card1.readBytesUntil(3, tagNumber, 15);//EOT (3) is the last character in tag
+      part1 = tagNumber;
     }
+    Serial.println("Tag is: " + part1);
     if(part1.equals(solutions[chosenSol][1])){
       //start pink lamp
       digitalWrite(rgbRed, 170);
@@ -145,16 +146,12 @@ void loop() {
   
   if(Serial3.available() > 0){
     while (Serial3.available()){
-      //part2 = Serial3.readBytesUntil(3, tagNumber, 15);//EOT (3) is the last character in tag
-      
-      buffer[count++] = Serial3.read();      // writing data into array
-      if(count == 64)break;
-      
+      int ReadBytes = Serial3.readBytesUntil(3, tagNumber, 15);//EOT (3) is the last character in tag
     }
     
-    part2 = String((char*)buffer);
+    part2 = tagNumber;
     Serial.println("Tag is: " + part2);
-    clearBufferArray();
+    
     
     if(part2.equals(solutions[chosenSol][2])){
       //start blue led
@@ -169,15 +166,11 @@ void loop() {
     //digitalWrite(card3LED, LOW);
   }
   
-  card3.listen();
-
-  
+  //card3.listen();
   if(card3.available() > 0){
     Serial.println("Card 3 was avaiable");
     while (card3.available()){
       int BytesRead = card3.readBytesUntil(3, tagNumber, 15);//EOT (3) is the last character in tag
-      //buffer[count++] = card3.read();      // writing data into array
-      //if(count == 64)break;
     }
 
     part3 = tagNumber;
@@ -198,14 +191,11 @@ void loop() {
     //digitalWrite(card2LED, LOW);
   }
   
-  //Serial3.listen();
-
-  
-  
   if(Serial1.available() > 0){
     tagString = "";
     while (Serial1.available()){
-      tagString = Serial1.readBytesUntil(3, tagNumber, 15);//EOT (3) is the last character in tag
+      int ReadBytes = Serial1.readBytesUntil(3, tagNumber, 15);//EOT (3) is the last character in tag
+      tagString = tagNumber;
     }
 
     if(tagString.equals(chosenTag)){
