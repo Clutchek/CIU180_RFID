@@ -9,9 +9,13 @@
 //Card2 - Serial2
 //Card3 - Serial1
 
+//Defining the different cards that are used for each port
 #define card1 Serial3
 #define card2 Serial2
 #define card3 Serial1
+
+#define MAX_ROWS 4
+#define MAX_COLS 3
 
 //The rfid that confirms the solution is using the softwareserial library
 SoftwareSerial reader(50, 51);
@@ -49,8 +53,11 @@ char tagNumber[14];
 
 //unsigned char buffer[64];       // buffer array for data receive over serial port
 //int count = 0;                    // counter for buffer array
- 
-String solutions[4][3];
+
+
+int solRows = 4;
+int solCols = 3;
+String solutions[MAX_ROWS][MAX_COLS];
 
 int delayTime = 1000;
  
@@ -78,9 +85,9 @@ void setup() {
   digitalWrite(rgb3Red, 0);
   digitalWrite(rgb3Green, 0);
   digitalWrite(rgb3Blue, 0);
-  
-  pinMode(readerGreen, OUTPUT);
+
   pinMode(readerRed, OUTPUT);
+  pinMode(readerGreen, OUTPUT);
   pinMode(readerBlue, OUTPUT);
   digitalWrite(readerRed, 0);
   digitalWrite(readerGreen, 0);
@@ -105,12 +112,22 @@ void setup() {
   //The tag number of the tag that you want to "program"
   chosenTag = "410042E50AEC";
 
-  //Solutions
+  //Solutions to the game. The first number indicates the number of the solution and the second number is the solutions sub parts.
+  solutions[0][0] = "410043C377B6";
+  solutions[0][1] = "410043C377B6";
+  solutions[0][2] = "410043C377B6";
+
+  solutions[1][0] = "410043C377B6";
   solutions[1][1] = "410043C377B6";
   solutions[1][2] = "410043C377B6";
-  solutions[1][3] = "410043C377B6";
-  //Tag Number: 410043C377B6
 
+  solutions[2][0] = "410043C377B6";
+  solutions[2][1] = "410043C377B6";
+  solutions[2][2] = "410043C377B6";
+
+  solutions[3][0] = "410043C377B6";
+  solutions[3][1] = "410043C377B6";
+  solutions[3][2] = "410043C377B6";
 }
  
 void loop() {
@@ -131,18 +148,14 @@ void loop() {
       int ReadBytes = card1.readBytesUntil(3, tagNumber, 15);//EOT (3) is the last character in tag
       part1 = tagNumber;
     }
-    Serial.println("Tag is: " + part1);
-    if(part1.equals(solutions[chosenSol][1])){
-      //Solution found, turning on green
-      digitalWrite(rgb1Red, 0);
-      digitalWrite(rgb1Green, 255);
-      digitalWrite(rgb1Blue, 0);
+    Serial.println("Card 1 registered tag as: " + part1);
+    if(isCorrectType(1, part1)){
+      //Card type was correct, turn on blue light
+      setLedColor(rgb1Red, rgb1Green, rgb1Blue, "blue");
       
     }else{
-      //Solution not found, turning on red
-      digitalWrite(rgb1Red, 255);
-      digitalWrite(rgb1Green, 0);
-      digitalWrite(rgb1Blue, 0);
+      //Card type was not correct, turning on red
+      setLedColor(rgb1Red, rgb1Green, rgb1Blue, "red");
     }
   }
   
@@ -151,44 +164,31 @@ void loop() {
       int ReadBytes = card2.readBytesUntil(3, tagNumber, 15);//EOT (3) is the last character in tag
     }
     part2 = tagNumber;
-    Serial.println("Tag is: " + part2);
+    Serial.println("Card 2 registered tag as: " + part2);
     
     
-    if(part2.equals(solutions[chosenSol][2])){
-      //Solution found, turning on green
-      digitalWrite(rgb2Red, 0);
-      digitalWrite(rgb2Green, 255);
-      digitalWrite(rgb2Blue, 0);
+    if(isCorrectType(2, part2)){
+      //Card type was correct, turn on blue light
+      setLedColor(rgb2Red, rgb2Green, rgb2Blue, "blue");
     }else{
-      //Solution not found, turning on red
-      digitalWrite(rgb2Red, 255);
-      digitalWrite(rgb2Green, 0);
-      digitalWrite(rgb2Blue, 0);
-      
+      //Card type was not correct, turn on red light
+      setLedColor(rgb2Red, rgb2Green, rgb2Blue, "red");
     }
   }
   
   if(card3.available() > 0){
-    Serial.println("Card 3 was avaiable");
     while (card3.available()){
       int BytesRead = card3.readBytesUntil(3, tagNumber, 15);//EOT (3) is the last character in tag
     }
-
     part3 = tagNumber;
-    Serial.println("Tag is: " + part3);
-    //clearBufferArray();    
+    Serial.println("Card 3 registered tag as: " + part3);
 
-    if(part3.equals(solutions[chosenSol][3])){
-      //Solution found, turning on green
-      digitalWrite(rgb3Red, 0);
-      digitalWrite(rgb3Green, 255);
-      digitalWrite(rgb3Blue, 0);
-      
+    if(isCorrectType(3, part3)){
+      //Card type was correct, turn on blue light
+      setLedColor(rgb3Red, rgb3Green, rgb3Blue, "blue");
     }else{
-      //Solution not found, turning on red
-      digitalWrite(rgb3Red, 255);
-      digitalWrite(rgb3Green, 0);
-      digitalWrite(rgb3Blue, 0);
+      //Card type was not correct, turn on red light
+      setLedColor(rgb3Red, rgb3Green, rgb3Blue, "red");
     }
   }
   
@@ -198,29 +198,81 @@ void loop() {
       int ReadBytes = reader.readBytesUntil(3, tagNumber, 15);//EOT (3) is the last character in tag
     }
     tagString = tagNumber;
-    Serial.println(tagString);
+    Serial.println("Reader registered scanned tag as: " + tagString);
 
     if(tagString.equals(chosenTag)){
-      if(part1.equals(solutions[chosenSol][1]) && part2.equals(solutions[chosenSol][2]) && part3.equals(solutions[chosenSol][3])){
+
+      if(part1.equals(solutions[chosenSol][0])){
+        //part was correct, turn on green light
+        setLedColor(rgb1Red, rgb1Green, rgb1Blue, "green");
+      }else{
+        //part was incorrect, turn on red light
+        setLedColor(rgb1Red, rgb1Green, rgb1Blue, "red");
+      }
+
+      if(part2.equals(solutions[chosenSol][1])){
+        //part was correct, turn on green light
+        setLedColor(rgb2Red, rgb2Green, rgb2Blue, "green");
+      }else{
+        //part was incorrect, turn on red light
+        setLedColor(rgb2Red, rgb2Green, rgb2Blue, "red");
+      }
+      
+      if(part3.equals(solutions[chosenSol][2])){
+        //part was correct, turn on green light
+        setLedColor(rgb3Red, rgb3Green, rgb3Blue, "green");
+      }else{
+        //part was incorrect, turn on red light
+        setLedColor(rgb3Red, rgb3Green, rgb3Blue, "red");
+      }
+      
+      //Sending data over serial to display victory/failure states on computer screen
+      if(part1.equals(solutions[chosenSol][0]) && part2.equals(solutions[chosenSol][1]) && part3.equals(solutions[chosenSol][2])){
         //print victory over serial
-        Serial.print(5);
-        digitalWrite(readerRed, 0);
-        digitalWrite(readerGreen, 255);
-        digitalWrite(readerBlue, 0);
-        
+        setLedColor(readerRed, readerGreen, readerBlue, "green");
+        Serial.println(5);
       }else{
         //print fail over serial
-        Serial.print(6);
-        digitalWrite(readerRed, 255);
-        digitalWrite(readerGreen, 0);
-        digitalWrite(readerBlue, 0);
+        setLedColor(readerRed, readerGreen, readerBlue, "red");
+        Serial.println(6);
       }
-    }else{
-        //wrong tag scanned
-        digitalWrite(readerRed, 255);
-        digitalWrite(readerGreen, 0);
-        digitalWrite(readerBlue, 0);
+    }
+    //wrong tag scanned, do noting
+    
+  }
+}
+
+//method to save some repetition in starting lights
+void setLedColor(int redPin, int greenPin, int bluePin, String color){
+  if(color.equals("blue")){
+    digitalWrite(redPin, 0);
+    digitalWrite(greenPin, 0);
+    digitalWrite(bluePin, 255);
+  }else if(color.equals("red")){
+    digitalWrite(redPin, 255);
+    digitalWrite(greenPin, 0);
+    digitalWrite(bluePin, 0);
+  }else if(color.equals("green")){
+    digitalWrite(redPin, 0);
+    digitalWrite(greenPin, 255);
+    digitalWrite(bluePin, 0);
+  }else if(color.equals("off")){
+    digitalWrite(redPin, 0);
+    digitalWrite(greenPin, 0);
+    digitalWrite(bluePin, 0);
+  }
+  //else do nothing
+}
+
+//method to find out if a scanned tag is of the correct type of the used reader
+boolean isCorrectType(int cardNumber,String scannedTag){
+  int j;
+  boolean wasFound = false;
+  for(j = 0; j < MAX_ROWS; j++){
+    if(scannedTag.equals(solutions[j][cardNumber-1])){
+      wasFound = true;
     }
   }
+  return wasFound;
 }
 
