@@ -55,7 +55,7 @@ char tagNumber[14];
 //int count = 0;                    // counter for buffer array
 
 
-int solRows = 4;
+int solRows = 5;
 int solCols = 3;
 String solutions[MAX_ROWS][MAX_COLS];
 
@@ -107,10 +107,15 @@ void setup() {
   reader.listen();
   
   //initiating chosen solution to 1 as default
-  chosenSol = 1;
+  chosenSol = 0;
 
   //The tag number of the tag that you want to "program"
   chosenTag = "410042E50AEC";
+
+  part1= "";
+  part2= "";
+  part3= "";
+
 
   //Solutions to the game. The first number indicates the number of the solution and the second number is the solutions sub parts.
   solutions[0][0] = "410043C377B6";
@@ -128,6 +133,10 @@ void setup() {
   solutions[3][0] = "410043C377B6";
   solutions[3][1] = "410043C377B6";
   solutions[3][2] = "410043C377B6";
+  
+  solutions[4][0] = "410043C377B6";
+  solutions[4][1] = "410043C377B6";
+  solutions[4][2] = "410043C377B6";
 }
  
 void loop() {
@@ -136,19 +145,21 @@ void loop() {
   //delay(500);
 
   //enabling new solution from computer
-  /*if(Serial.available() > 0){
+  if(Serial.available() > 0){
     char newSol = Serial.read();
     if(chosenSol > 0 && chosenSol < 5){
-      chosenSol = newSol;  
+      chosenSol = newSol;
+      //Serial.println(chosenSol);  
+      resetLeds();
     }
-  }*/
+  }
   
   if(card1.available() > 0){
     while (card1.available()){
       int ReadBytes = card1.readBytesUntil(3, tagNumber, 15);//EOT (3) is the last character in tag
       part1 = tagNumber;
     }
-    Serial.println("Card 1 registered tag as: " + part1);
+    //Serial.println("Card 1 registered tag as: " + part1);
     if(isCorrectType(1, part1)){
       //Card type was correct, turn on blue light
       setLedColor(rgb1Red, rgb1Green, rgb1Blue, "blue");
@@ -164,7 +175,7 @@ void loop() {
       int ReadBytes = card2.readBytesUntil(3, tagNumber, 15);//EOT (3) is the last character in tag
     }
     part2 = tagNumber;
-    Serial.println("Card 2 registered tag as: " + part2);
+    //Serial.println("Card 2 registered tag as: " + part2);
     
     
     if(isCorrectType(2, part2)){
@@ -181,7 +192,7 @@ void loop() {
       int BytesRead = card3.readBytesUntil(3, tagNumber, 15);//EOT (3) is the last character in tag
     }
     part3 = tagNumber;
-    Serial.println("Card 3 registered tag as: " + part3);
+    //Serial.println("Card 3 registered tag as: " + part3);
 
     if(isCorrectType(3, part3)){
       //Card type was correct, turn on blue light
@@ -198,10 +209,11 @@ void loop() {
       int ReadBytes = reader.readBytesUntil(3, tagNumber, 15);//EOT (3) is the last character in tag
     }
     tagString = tagNumber;
-    Serial.println("Reader registered scanned tag as: " + tagString);
-
-    if(tagString.equals(chosenTag)){
-
+    //Serial.println(tagString);
+    //chosenTag = "410042E50AEC";
+    //Serial.println(chosenTag);
+    if(chosenTag.equals(tagString)){
+      
       if(part1.equals(solutions[chosenSol][0])){
         //part was correct, turn on green light
         setLedColor(rgb1Red, rgb1Green, rgb1Blue, "green");
@@ -217,7 +229,11 @@ void loop() {
         //part was incorrect, turn on red light
         setLedColor(rgb2Red, rgb2Green, rgb2Blue, "red");
       }
-      
+
+      //Serial.println(solutions[chosenSol][2]);
+      //Serial.println(part3);
+      //Serial.println(part2);
+      //Serial.println(part1);
       if(part3.equals(solutions[chosenSol][2])){
         //part was correct, turn on green light
         setLedColor(rgb3Red, rgb3Green, rgb3Blue, "green");
@@ -230,11 +246,11 @@ void loop() {
       if(part1.equals(solutions[chosenSol][0]) && part2.equals(solutions[chosenSol][1]) && part3.equals(solutions[chosenSol][2])){
         //print victory over serial
         setLedColor(readerRed, readerGreen, readerBlue, "green");
-        Serial.println(5);
+        Serial.print(5);
       }else{
         //print fail over serial
         setLedColor(readerRed, readerGreen, readerBlue, "red");
-        Serial.println(6);
+        Serial.print(6);
       }
     }
     //wrong tag scanned, do noting
@@ -274,5 +290,28 @@ boolean isCorrectType(int cardNumber,String scannedTag){
     }
   }
   return wasFound;
+}
+
+//Turning off all leds
+void resetLeds(){
+  digitalWrite(rgb1Red, 0);
+  digitalWrite(rgb1Green, 0);
+  digitalWrite(rgb1Blue, 0);
+
+  digitalWrite(rgb1Red, 0);
+  digitalWrite(rgb1Green, 0);
+  digitalWrite(rgb1Blue, 0);
+
+  digitalWrite(rgb2Red, 0);
+  digitalWrite(rgb2Green, 0);
+  digitalWrite(rgb2Blue, 0);
+
+  digitalWrite(rgb3Red, 0);
+  digitalWrite(rgb3Green, 0);
+  digitalWrite(rgb3Blue, 0);
+
+  digitalWrite(readerRed, 0);
+  digitalWrite(readerGreen, 0);
+  digitalWrite(readerBlue, 0); 
 }
 
