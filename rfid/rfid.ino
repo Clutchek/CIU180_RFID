@@ -14,7 +14,7 @@
 #define card2 Serial2
 #define card3 Serial1
 
-#define MAX_ROWS 4
+#define MAX_ROWS 5
 #define MAX_COLS 3
 
 //The rfid that confirms the solution is using the softwareserial library
@@ -55,8 +55,6 @@ char tagNumber[14];
 //int count = 0;                    // counter for buffer array
 
 
-int solRows = 5;
-int solCols = 3;
 String solutions[MAX_ROWS][MAX_COLS];
 
 int delayTime = 1000;
@@ -75,9 +73,9 @@ void setup() {
   pinMode(rgb2Green, OUTPUT);
   pinMode(rgb2Red, OUTPUT);
   pinMode(rgb2Blue, OUTPUT);
-  digitalWrite(rgb1Red, 0);
-  digitalWrite(rgb1Green, 0);
-  digitalWrite(rgb1Blue, 0);
+  digitalWrite(rgb2Red, 0);
+  digitalWrite(rgb2Green, 0);
+  digitalWrite(rgb2Blue, 0);
 
   pinMode(rgb3Green, OUTPUT);
   pinMode(rgb3Red, OUTPUT);
