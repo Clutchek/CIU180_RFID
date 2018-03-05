@@ -292,6 +292,10 @@ boolean isCorrectType(int cardNumber,String scannedTag){
 
 //Turning off all leds
 void resetLeds(){
+  part1 = "";
+  part2 = "";
+  part3 = "";
+  
   digitalWrite(rgb1Red, 0);
   digitalWrite(rgb1Green, 0);
   digitalWrite(rgb1Blue, 0);
