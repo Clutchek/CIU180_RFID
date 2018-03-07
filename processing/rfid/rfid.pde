@@ -1,4 +1,5 @@
 import processing.serial.*;
+import processing.sound.*;
 
 //Positions of buttons
 int[] btnX;
@@ -26,11 +27,17 @@ int endState; //Represents if an endstate has occured. 0 is false, 5 is win, 6 i
 //Hover state of each button
 boolean[] btnHover;
 
+SoundFile winFile, failFile;
+
 void setup(){
   //Settings for window and graphics
   size(1280,720);
   background(255,255,255);
   pixelDensity(2);
+  
+  //Load sound files
+  failFile = new SoundFile(this, "fail.mp3");
+  winFile = new SoundFile(this, "win.wav");
   
   //Set color and sizes
   btnColor = color(#008CBA);
@@ -66,11 +73,12 @@ void setup(){
   
   //Descriptions
   exerciseDescs = new String[5];
-  exerciseDescs[0] = "Test1, this is a longer description of things that makes it longer. Lorem ipsum and so on bla bla bla...";
-  exerciseDescs[1] = "Test2";
-  exerciseDescs[2] = "Test3";
-  exerciseDescs[3] = "Test4";
-  exerciseDescs[4] = "Test5";
+  exerciseDescs[0] = "Make an electronic product code (EPC) which allows your RFID to open a door" + "\n \n" + "The door accepts key #12, #34, #86, #42 and #05" + "\n \n"
++"The manual tells that the door reads RFID with code packages 2";
+  exerciseDescs[1] = "Steal a credit card by making an RFID tag which is a copy of it" + "\n \n" + "The credit card uses code package 2 from the producer and is encrypted so that it only uses serial keys with a singel digit in them";
+  exerciseDescs[2] = "Open an unknown lock, using producer package 1, by unlocking it using a key containing a prime number";
+  exerciseDescs[3] = "Make it so that your RFID can open a safe" + "\n \n" + "The safe accepts key serial 5262773D595" + "\n \n" + "The product package for opening this safe must include letters in its second and third part";
+  exerciseDescs[4] = "Open a door which accepts even numbers higher than 50" + "\n \n" + "The door uses producer package 1 to read RFID's";
   
   //Default exercise is the first one
   chosenExercise = 0;
@@ -129,7 +137,7 @@ void updateDesc(){
   String text = exerciseDescs[chosenExercise]; 
   fill(0,0,0);
   int boxWidth = 600;
-  int boxHeight = 390;
+  int boxHeight = 430;
   
   //draw new text
   text(text, 0+((1280-boxWidth)/2), 10, boxWidth, boxHeight);
@@ -144,7 +152,12 @@ void removeOldText(){
 //Display win or fail
 void setEndState(int state){
   //5 represents win state
-  endState = state; 
+  endState = state;
+  if(endState == 53){
+    winFile.play();
+  }else if(endState == 54){
+    failFile.play();
+  }
     
 }
 
@@ -154,7 +167,7 @@ void updateEndMessage(){
   int endMessageHeight = 100;
   
   int endMessageX = 0+((1280-endMessageWidth)/2);
-  int endMessageY = 400;
+  int endMessageY = 460;
   
   if(endState == 53){
     fill(50,205,50);
