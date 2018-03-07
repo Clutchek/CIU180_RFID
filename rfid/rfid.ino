@@ -116,25 +116,25 @@ void setup() {
 
 
   //Solutions to the game. The first number indicates the number of the solution and the second number is the solutions sub parts.
-  solutions[0][0] = "410043C377B6";
-  solutions[0][1] = "410043C377B6";
-  solutions[0][2] = "410043C377B6";
+  solutions[0][0] = "410042302A19"; //package1
+  solutions[0][1] = "4100467FFF87";//door
+  solutions[0][2] = "4300095F8A9F"; //serial 42
 
-  solutions[1][0] = "410043C377B6";
-  solutions[1][1] = "410043C377B6";
-  solutions[1][2] = "410043C377B6";
+  solutions[1][0] = "410042302A19"; //pacakge1
+  solutions[1][1] = "410046D17CAA"; //credit card
+  solutions[1][2] = "410046D08E59"; // serial 02
 
-  solutions[2][0] = "410043C377B6";
-  solutions[2][1] = "410043C377B6";
-  solutions[2][2] = "410043C377B6";
+  solutions[2][0] = "410043ADAE01"; //pacakge2
+  solutions[2][1] = "410043C377B6"; // safe
+  solutions[2][2] = "4100442C4069"; //serial 73
 
-  solutions[3][0] = "410043C377B6";
-  solutions[3][1] = "410043C377B6";
-  solutions[3][2] = "410043C377B6";
+  solutions[3][0] = "410043ADAE01"; //pacakge2
+  solutions[3][1] = "410043C377B6"; // safe
+  solutions[3][2] = "410045A3BE19"; //serial 25
   
-  solutions[4][0] = "410043C377B6";
-  solutions[4][1] = "410043C377B6";
-  solutions[4][2] = "410043C377B6";
+  solutions[4][0] = "410043ADAE01"; //pacakge2
+  solutions[4][1] = "4100467FFF87"; //door
+  solutions[4][2] = "410042304271"; //serial 56
 }
  
 void loop() {
@@ -145,10 +145,10 @@ void loop() {
   //enabling new solution from computer
   if(Serial.available() > 0){
     char newSol = Serial.read();
-    if(chosenSol > 0 && chosenSol < 5){
+    
+    if(newSol > -1 && newSol < 5){
       chosenSol = newSol;
-      //Serial.println(chosenSol);  
-      resetLeds();
+      resetLeds();  
     }
   }
   
